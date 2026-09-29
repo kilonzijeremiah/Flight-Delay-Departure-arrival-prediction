@@ -4,7 +4,7 @@ from predict import predict_delays
 # Page config - using the KQ logo as icon
 st.set_page_config(
     page_title="Kenya Airways Delay Predictor",
-    page_icon="kq_logo.png",          # ← your logo as browser tab icon
+    page_icon="fDtEl.png",          # ← your logo as browser tab icon
     layout="centered"
 )
 
