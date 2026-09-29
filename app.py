@@ -51,13 +51,6 @@ st.markdown("""
         color: white;
     }
 
-    .prediction-card {
-        padding: 1rem;
-        border-radius: 10px;
-        border: 1px solid #dddddd;
-        margin-top: 1rem;
-    }
-
     </style>
 """, unsafe_allow_html=True)
 
@@ -108,7 +101,7 @@ KENYA_AIRWAYS_AIRPORTS = {
 
 
 # ============================================================
-# AIRLINE OPTIONS
+# AIRLINES
 # ============================================================
 
 AIRLINES = {
@@ -152,6 +145,39 @@ DAYS_OF_WEEK = {
 
 
 # ============================================================
+# TIME OPTIONS
+# ============================================================
+
+# Create valid times from 00:00 to 23:55
+# in 5-minute intervals.
+
+TIME_OPTIONS = []
+
+for hour in range(24):
+    for minute in range(0, 60, 5):
+        TIME_OPTIONS.append(
+            f"{hour:02d}:{minute:02d}"
+        )
+
+
+# ============================================================
+# TIME CONVERSION FUNCTION
+# ============================================================
+
+def time_to_hhmm(time_string):
+    """
+    Convert HH:MM string into integer HHMM.
+
+    Example:
+        08:00 -> 800
+        10:30 -> 1030
+        18:45 -> 1845
+    """
+
+    return int(time_string.replace(":", ""))
+
+
+# ============================================================
 # LOGO
 # ============================================================
 
@@ -190,13 +216,17 @@ with st.form("prediction_form"):
 
     col1, col2 = st.columns(2)
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # LEFT COLUMN
-    # --------------------------------------------------------
+    # ========================================================
 
     with col1:
 
-        # Airline
+        # ----------------------------------------------------
+        # AIRLINE
+        # ----------------------------------------------------
+
         airline_name = st.selectbox(
             "Airline *",
             options=list(AIRLINES.keys()),
@@ -205,8 +235,14 @@ with st.form("prediction_form"):
 
         airline = AIRLINES[airline_name]
 
-        # Origin
-        airport_names = list(KENYA_AIRWAYS_AIRPORTS.keys())
+
+        # ----------------------------------------------------
+        # ORIGIN
+        # ----------------------------------------------------
+
+        airport_names = list(
+            KENYA_AIRWAYS_AIRPORTS.keys()
+        )
 
         origin_name = st.selectbox(
             "Origin Airport *",
@@ -216,9 +252,15 @@ with st.form("prediction_form"):
             )
         )
 
-        origin = KENYA_AIRWAYS_AIRPORTS[origin_name]
+        origin = KENYA_AIRWAYS_AIRPORTS[
+            origin_name
+        ]
 
-        # Destination
+
+        # ----------------------------------------------------
+        # DESTINATION
+        # ----------------------------------------------------
+
         destination_name = st.selectbox(
             "Destination Airport *",
             options=airport_names,
@@ -227,64 +269,88 @@ with st.form("prediction_form"):
             )
         )
 
-        destination = KENYA_AIRWAYS_AIRPORTS[destination_name]
+        destination = KENYA_AIRWAYS_AIRPORTS[
+            destination_name
+        ]
 
-        # Scheduled departure
-        scheduled_departure = st.number_input(
-            "Scheduled Departure (HHMM) *",
-            min_value=0,
-            max_value=2359,
-            value=800,
-            step=5,
-            help="Enter time using 24-hour HHMM format. Example: 0800."
-        )
 
-        # Scheduled arrival
-        scheduled_arrival = st.number_input(
-            "Scheduled Arrival (HHMM) *",
-            min_value=0,
-            max_value=2359,
-            value=1030,
-            step=5,
-            help="Enter time using 24-hour HHMM format. Example: 1030."
+        # ----------------------------------------------------
+        # SCHEDULED DEPARTURE
+        # ----------------------------------------------------
+
+        scheduled_departure_time = st.selectbox(
+            "Scheduled Departure *",
+            options=TIME_OPTIONS,
+            index=96,
+            help="Select the scheduled departure time."
         )
 
 
-    # --------------------------------------------------------
+        # ----------------------------------------------------
+        # SCHEDULED ARRIVAL
+        # ----------------------------------------------------
+
+        scheduled_arrival_time = st.selectbox(
+            "Scheduled Arrival *",
+            options=TIME_OPTIONS,
+            index=126,
+            help="Select the scheduled arrival time."
+        )
+
+
+    # ========================================================
     # RIGHT COLUMN
-    # --------------------------------------------------------
+    # ========================================================
 
     with col2:
 
-        # Scheduled duration
+        # ----------------------------------------------------
+        # SCHEDULED DURATION
+        # ----------------------------------------------------
+
         scheduled_time = st.number_input(
             "Scheduled Duration (minutes) *",
             min_value=30,
             value=150,
-            step=5
+            step=5,
+            help="Scheduled flight duration in minutes."
         )
 
-        # Distance
+
+        # ----------------------------------------------------
+        # DISTANCE
+        # ----------------------------------------------------
+
         distance = st.number_input(
             "Distance (miles) *",
             min_value=50,
             value=1800,
-            step=10
+            step=10,
+            help="Approximate flight distance in miles."
         )
 
-        # Month
+
+        # ----------------------------------------------------
+        # MONTH
+        # ----------------------------------------------------
+
         month_name = st.selectbox(
             "Month *",
             options=list(MONTHS.values()),
             index=6
         )
 
-        # Convert month name back to number
         month = list(MONTHS.keys())[
-            list(MONTHS.values()).index(month_name)
+            list(MONTHS.values()).index(
+                month_name
+            )
         ]
 
-        # Day of month
+
+        # ----------------------------------------------------
+        # DAY OF MONTH
+        # ----------------------------------------------------
+
         day = st.number_input(
             "Day of Month *",
             min_value=1,
@@ -293,16 +359,23 @@ with st.form("prediction_form"):
             step=1
         )
 
-        # Day of week
+
+        # ----------------------------------------------------
+        # DAY OF WEEK
+        # ----------------------------------------------------
+
         day_name = st.selectbox(
             "Day of Week *",
             options=list(DAYS_OF_WEEK.values()),
             index=1
         )
 
-        # Convert day name to number
-        day_of_week = list(DAYS_OF_WEEK.keys())[
-            list(DAYS_OF_WEEK.values()).index(day_name)
+        day_of_week = list(
+            DAYS_OF_WEEK.keys()
+        )[
+            list(DAYS_OF_WEEK.values()).index(
+                day_name
+            )
         ]
 
 
@@ -318,14 +391,15 @@ with st.form("prediction_form"):
         value=0,
         step=1,
         help=(
-            "Leave as 0 if unknown. Providing the actual departure "
-            "delay can improve arrival prediction."
+            "Leave as 0 if unknown. "
+            "Providing the actual departure delay "
+            "can improve arrival prediction."
         )
     )
 
 
     # ========================================================
-    # SUBMIT BUTTON
+    # SUBMIT
     # ========================================================
 
     submitted = st.form_submit_button(
@@ -342,59 +416,46 @@ if submitted:
     errors = []
 
 
-    # --------------------------------------------------------
+    # ========================================================
+    # CONVERT TIMES
+    # ========================================================
+
+    scheduled_departure = time_to_hhmm(
+        scheduled_departure_time
+    )
+
+    scheduled_arrival = time_to_hhmm(
+        scheduled_arrival_time
+    )
+
+
+    # ========================================================
     # VALIDATE ORIGIN / DESTINATION
-    # --------------------------------------------------------
+    # ========================================================
 
     if origin == destination:
 
         errors.append(
-            "Origin and destination airports cannot be the same."
+            "Origin and destination airports "
+            "cannot be the same."
         )
 
 
-    # --------------------------------------------------------
-    # VALIDATE DEPARTURE TIME
-    # --------------------------------------------------------
-
-    departure_minutes = int(scheduled_departure) % 100
-
-    if departure_minutes > 59:
-
-        errors.append(
-            "Invalid Scheduled Departure time. "
-            "Minutes cannot be greater than 59."
-        )
-
-
-    # --------------------------------------------------------
-    # VALIDATE ARRIVAL TIME
-    # --------------------------------------------------------
-
-    arrival_minutes = int(scheduled_arrival) % 100
-
-    if arrival_minutes > 59:
-
-        errors.append(
-            "Invalid Scheduled Arrival time. "
-            "Minutes cannot be greater than 59."
-        )
-
-
-    # --------------------------------------------------------
+    # ========================================================
     # VALIDATE DURATION
-    # --------------------------------------------------------
+    # ========================================================
 
     if scheduled_time < 30:
 
         errors.append(
-            "Scheduled Duration must be at least 30 minutes."
+            "Scheduled Duration must be "
+            "at least 30 minutes."
         )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # VALIDATE DISTANCE
-    # --------------------------------------------------------
+    # ========================================================
 
     if distance < 50:
 
@@ -467,14 +528,16 @@ if submitted:
 
         if actual_dep_delay != 0:
 
-            input_data["DEPARTURE_DELAY"] = float(
+            input_data[
+                "DEPARTURE_DELAY"
+            ] = float(
                 actual_dep_delay
             )
 
 
-        # ----------------------------------------------------
+        # ====================================================
         # PREDICT
-        # ----------------------------------------------------
+        # ====================================================
 
         try:
 
@@ -487,40 +550,95 @@ if submitted:
                 )
 
 
-            # ------------------------------------------------
-            # SUCCESS MESSAGE
-            # ------------------------------------------------
+            # =================================================
+            # SUCCESS
+            # =================================================
 
             st.success(
                 "Prediction completed successfully!"
             )
 
 
-            # ------------------------------------------------
-            # SHOW SELECTED FLIGHT
-            # ------------------------------------------------
+            # =================================================
+            # FLIGHT INFORMATION
+            # =================================================
 
             st.subheader("Flight Information")
 
             flight_col1, flight_col2, flight_col3 = st.columns(3)
 
+
+            # -------------------------------------------------
+            # AIRLINE
+            # -------------------------------------------------
+
             with flight_col1:
 
                 st.write("**Airline**")
-                st.write(airline_name)
+
+                st.write(
+                    airline_name
+                )
+
+
+            # -------------------------------------------------
+            # ROUTE
+            # -------------------------------------------------
 
             with flight_col2:
 
                 st.write("**Route**")
+
                 st.write(
                     f"{origin} → {destination}"
                 )
 
+
+            # -------------------------------------------------
+            # DATE
+            # -------------------------------------------------
+
             with flight_col3:
 
-                st.write("**Travel Day**")
+                st.write("**Travel Date**")
+
                 st.write(
-                    f"{day_name}, {month_name} {day}"
+                    f"{day_name}, "
+                    f"{month_name} {day}"
+                )
+
+
+            st.divider()
+
+
+            # =================================================
+            # SCHEDULE INFORMATION
+            # =================================================
+
+            st.subheader("Schedule")
+
+            schedule_col1, schedule_col2 = st.columns(2)
+
+
+            with schedule_col1:
+
+                st.write(
+                    "**Scheduled Departure**"
+                )
+
+                st.write(
+                    scheduled_departure_time
+                )
+
+
+            with schedule_col2:
+
+                st.write(
+                    "**Scheduled Arrival**"
+                )
+
+                st.write(
+                    scheduled_arrival_time
                 )
 
 
@@ -531,46 +649,56 @@ if submitted:
             # PREDICTION RESULTS
             # =================================================
 
-            st.subheader("Prediction Results")
+            st.subheader(
+                "Prediction Results"
+            )
 
             col_a, col_b = st.columns(2)
 
 
-            # ------------------------------------------------
-            # DEPARTURE RESULT
-            # ------------------------------------------------
+            # -------------------------------------------------
+            # DEPARTURE DELAY
+            # -------------------------------------------------
 
             with col_a:
 
                 st.metric(
                     label="Departure Delay",
-                    value=f"{result['departure_delay']} min",
-                    delta=result["departure_status"],
+                    value=(
+                        f"{result['departure_delay']} min"
+                    ),
+                    delta=(
+                        result["departure_status"]
+                    ),
                     delta_color="inverse"
                 )
 
 
-            # ------------------------------------------------
-            # ARRIVAL RESULT
-            # ------------------------------------------------
+            # -------------------------------------------------
+            # ARRIVAL DELAY
+            # -------------------------------------------------
 
             with col_b:
 
                 st.metric(
                     label="Arrival Delay",
-                    value=f"{result['arrival_delay']} min",
-                    delta=result["arrival_status"],
+                    value=(
+                        f"{result['arrival_delay']} min"
+                    ),
+                    delta=(
+                        result["arrival_status"]
+                    ),
                     delta_color="inverse"
                 )
 
 
-            # ------------------------------------------------
+            # =================================================
             # INFORMATION
-            # ------------------------------------------------
+            # =================================================
 
             st.info(
-                "ℹ️ A delay greater than 15 minutes is "
-                "considered significant."
+                "A delay greater than 15 minutes "
+                "is considered significant."
             )
 
 
