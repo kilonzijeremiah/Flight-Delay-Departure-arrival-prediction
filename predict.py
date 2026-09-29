@@ -1,31 +1,20 @@
 import pandas as pd
 import joblib
-from sklearn.base import BaseEstimator, TransformerMixin
 
-# ============================================================
-# IMPORTANT: Define the custom class BEFORE loading the models
-# ============================================================
-class TimeToMinutes(BaseEstimator, TransformerMixin):
-    def __init__(self, columns):
-        self.columns = columns
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X = X.copy()
-        for col in self.columns:
-            X[col] = (X[col] // 100) * 60 + (X[col] % 100)
-        return X
-
-
-# Now load the models (class is already defined)
+# Load models
 dep_model = joblib.load("departure_delay_model.joblib")
 arr_model = joblib.load("arrival_delay_model.joblib")
 
+def convert_time(val):
+    """Convert HHMM integer to minutes past midnight"""
+    return (val // 100) * 60 + (val % 100)
 
 def predict_delays(data: dict) -> dict:
     df = pd.DataFrame([data])
+
+    # Convert time columns
+    df['SCHEDULED_DEPARTURE'] = df['SCHEDULED_DEPARTURE'].apply(convert_time)
+    df['SCHEDULED_ARRIVAL'] = df['SCHEDULED_ARRIVAL'].apply(convert_time)
 
     base_cols = [
         'ORIGIN_AIRPORT', 'DESTINATION_AIRPORT', 'AIRLINE',
