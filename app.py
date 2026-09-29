@@ -186,7 +186,7 @@ st.divider()
 
 with st.form("prediction_form"):
 
-    st.subheader("✈️ Flight Details")
+    st.subheader("Flight Details")
 
     col1, col2 = st.columns(2)
 
@@ -329,7 +329,7 @@ with st.form("prediction_form"):
     # ========================================================
 
     submitted = st.form_submit_button(
-        "🔮 Predict Delays"
+        "Predict Delays"
     )
 
 
@@ -479,7 +479,7 @@ if submitted:
         try:
 
             with st.spinner(
-                "✈️ Analyzing flight and predicting delays..."
+                "Analyzing flight and predicting delays..."
             ):
 
                 result = predict_delays(
@@ -531,7 +531,7 @@ if submitted:
             # PREDICTION RESULTS
             # =================================================
 
-            st.subheader("📊 Prediction Results")
+            st.subheader("Prediction Results")
 
             col_a, col_b = st.columns(2)
 
@@ -543,7 +543,7 @@ if submitted:
             with col_a:
 
                 st.metric(
-                    label="🛫 Departure Delay",
+                    label="Departure Delay",
                     value=f"{result['departure_delay']} min",
                     delta=result["departure_status"],
                     delta_color="inverse"
@@ -557,7 +557,7 @@ if submitted:
             with col_b:
 
                 st.metric(
-                    label="🛬 Arrival Delay",
+                    label="Arrival Delay",
                     value=f"{result['arrival_delay']} min",
                     delta=result["arrival_status"],
                     delta_color="inverse"
@@ -593,5 +593,5 @@ st.divider()
 
 st.caption(
     "Kenya Airways Delay Prediction System • "
-    "Built with Streamlit + Machine Learning"
+    "Developed By Kilonzi J"
 )
