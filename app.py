@@ -3,58 +3,64 @@ from predict import predict_delays
 
 # Page config
 st.set_page_config(
-    page_title="Flight Delay Predictor",
+    page_title="Kenya Airways Delay Predictor",
     page_icon="✈️",
     layout="centered"
 )
 
-# Custom styling
+# Custom styling - Kenya Airways colors
 st.markdown("""
     <style>
     .main-title {
-        font-size: 2.3rem;
+        font-size: 2.2rem;
         font-weight: 700;
-        color: #1E3A5F;
+        color: #C8102E;
         text-align: center;
         margin-bottom: 0.3rem;
     }
     .sub-title {
         text-align: center;
-        color: #5A6A7A;
-        margin-bottom: 2rem;
+        color: #333333;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
     }
     .stButton > button {
         width: 100%;
         height: 3rem;
         font-size: 1.1rem;
-        background-color: #1E88E5;
+        background-color: #C8102E;
+        color: white;
+        border: none;
+    }
+    .stButton > button:hover {
+        background-color: #A00D24;
         color: white;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Header
-st.markdown('<p class="main-title">✈️ Flight Delay Predictor</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Predict Departure & Arrival Delays with Machine Learning</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">✈️ Kenya Airways Delay Predictor</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Predict Departure & Arrival Delays | Powered by Machine Learning</p>', unsafe_allow_html=True)
 
 st.divider()
 
 # Input Form
 with st.form("prediction_form"):
-    st.subheader("Enter Flight Details")
+    st.subheader("Flight Details")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        origin = st.text_input("Origin Airport", value="JFK")
-        destination = st.text_input("Destination Airport", value="LAX")
-        airline = st.text_input("Airline Code", value="AA")
+        origin = st.text_input("Origin Airport", value="NBO")
+        destination = st.text_input("Destination Airport", value="JNB")
+        airline = st.text_input("Airline Code", value="KQ")
         scheduled_departure = st.number_input("Scheduled Departure (HHMM)", min_value=0, max_value=2359, value=800)
-        scheduled_arrival = st.number_input("Scheduled Arrival (HHMM)", min_value=0, max_value=2359, value=1130)
+        scheduled_arrival = st.number_input("Scheduled Arrival (HHMM)", min_value=0, max_value=2359, value=1030)
 
     with col2:
-        scheduled_time = st.number_input("Scheduled Duration (minutes)", min_value=30, value=370)
-        distance = st.number_input("Distance (miles)", min_value=50, value=2475)
+        scheduled_time = st.number_input("Scheduled Duration (minutes)", min_value=30, value=150)
+        distance = st.number_input("Distance (miles)", min_value=50, value=1800)
         month = st.selectbox("Month", options=list(range(1, 13)), index=6)
         day = st.number_input("Day of Month", min_value=1, max_value=31, value=15)
         day_of_week = st.selectbox(
@@ -69,7 +75,7 @@ with st.form("prediction_form"):
         "Actual Departure Delay (minutes)",
         min_value=-60,
         value=0,
-        help="Leave as 0 if unknown. Providing the real departure delay improves arrival prediction."
+        help="Leave as 0 if unknown. Providing the real departure delay improves arrival prediction accuracy."
     )
 
     submitted = st.form_submit_button("Predict Delays")
@@ -93,7 +99,7 @@ if submitted:
         input_data["DEPARTURE_DELAY"] = float(actual_dep_delay)
 
     try:
-        with st.spinner("Predicting..."):
+        with st.spinner("Predicting delays..."):
             result = predict_delays(input_data)
 
         st.success("Prediction completed!")
@@ -123,4 +129,4 @@ if submitted:
 
 # Footer
 st.divider()
-st.caption("Built with Streamlit + scikit-learn | Flight Delay Prediction System")
+st.caption("Kenya Airways Delay Prediction System • Built with Streamlit + Machine Learning")
