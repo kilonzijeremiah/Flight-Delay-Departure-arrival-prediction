@@ -43,7 +43,7 @@ st.markdown("""
 # ---------- LOGO ----------
 col_logo = st.columns([1, 2, 1])
 with col_logo[1]:
-    st.image("kq_logo.png", width=160)
+    st.image("fDtEl.png", width=160)
 
 # Header
 st.markdown('<p class="main-title">Kenya Airways Delay Predictor</p>', unsafe_allow_html=True)
